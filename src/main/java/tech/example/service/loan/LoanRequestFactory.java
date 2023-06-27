@@ -8,12 +8,13 @@ import java.math.BigDecimal;
 This class is given as an example and should be replaced with real business logic
  */
 public class LoanRequestFactory {
-    public static LoanRequest newLoanRequest(String clientId, BigDecimal amount) {
+    public static LoanRequest newLoanRequest(String clientId, BigDecimal amount, String kycValidationResult) {
         LoanRequest result = new LoanRequest();
 
         result.setClientId(clientId);
         result.setAmount(amount);
         result.setApproved(false);
+        result.setKycValidationResult(kycValidationResult);
 
         return result;
     }

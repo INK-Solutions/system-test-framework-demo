@@ -1,0 +1,17 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/kyc/validation",
+      "queryStringParameters": [
+        {
+          "name": "clientId",
+          "values": ["fake-client-id"]
+        }
+      ]
+    },
+    "httpResponse": {
+      "body": "{\"clientId\": \"fake-client-id\", \"validationResult\": \"APPROVED\"}"
+    }
+  }
+]

@@ -15,6 +15,7 @@ public class LoanRequestDtoMapper {
                 .clientId(loanRequest.getClientId())
                 .amount(loanRequest.getAmount())
                 .approved(loanRequest.getApproved())
+                .kycValidationResult(loanRequest.getKycValidationResult())
                 .build();
     }
 }

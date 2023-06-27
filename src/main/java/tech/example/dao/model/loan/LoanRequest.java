@@ -19,4 +19,5 @@ public class LoanRequest extends AbstractEntity {
     private BigDecimal amount;
     private String clientId;
     private Boolean approved;
+    private String kycValidationResult;
 }
