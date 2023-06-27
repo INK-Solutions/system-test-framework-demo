@@ -1,0 +1,28 @@
+{
+  "infrastructure": {
+    "kafka": {
+      "topics": [
+        {
+          "name": "loan-approval-request",
+          "schema": "house.inksoftware.avro.generated.loan.LoanApprovalRequest",
+          "direction": "publish"
+        },
+        {
+          "name": "loan-approval-response",
+          "schema": "house.inksoftware.avro.generated.loan.LoanApprovalDecision",
+          "direction": "read"
+        }
+      ]
+    },
+    "database": {
+      "type": "postgres",
+      "image": "postgres:11.1"
+    }
+  }
+}
+
+
+
+
+
+

@@ -1,0 +1,110 @@
+#First pipeline sample
+
+# DinD service is required for Testcontainers
+# services:
+  # - name: docker:dind
+    # explicitly disable tls to avoid docker startup interruption
+    # command: ["--insecure-registry=$CI_REGISTRY", "--tls=false"]
+
+variables:
+  EXAMPLE_VARIABLE_INT: 123
+  EXAMPLE_VARIABLE_STRING: exampleValue
+  # Instruct Testcontainers to use the daemon of DinD.
+  #DOCKER_HOST: "tcp://docker:2375"
+  # Instruct Docker not to start over TLS.
+  #DOCKER_TLS_CERTDIR: ""
+  # Improve performance with overlayfs.
+  #DOCKER_DRIVER: overlay2
+
+image: gradle:7.5.1
+# image: gradle:7.3.0-jdk11-alpine
+
+stages:
+  - build
+  - test
+  #- vm-deploy
+  #- image-deploy
+
+before_script:  
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle
+    # - .m2/repository
+
+template-build:
+  stage: build
+  script:
+    - gradle --build-cache assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
+  artifacts:
+    paths:
+      - build/libs/*.jar
+
+template-test:
+  stage: test
+  dependencies:
+    - template-build
+  script:
+    - gradle check
+
+# template-deploy-dev:
+#   stage: vm-deploy
+#   when: manual
+#   tags:
+#     - dev
+#   before_script:
+#     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#     # Run ssh-agent (inside the build environment)
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$DEV_APP_PRIV_92")
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - ssh-keyscan $SEEDZ_IP >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   script:
+#     - echo "$SEEDZ_USER - $SEEDZ_IP"
+#     - ssh $SEEDZ_USER@$SEEDZ_IP "ls /path && exit"
+
+#     - scp merchant-printouts/build/libs/merchant-printouts-0.0.1-SNAPSHOT.jar $SEEDZ_USER@$SEEDZ_IP:/path/
+
+#     - scp src/main/resources/start_dev.sh $SEEDZ_USER@$SEEDZ_IP:/path/start.sh
+#     - scp src/main/resources/stop.sh $SEEDZ_USER@$SEEDZ_IP:/path/stop.sh
+#     - scp src/main/resources/confluent-dev.jks $SEEDZ_USER@$SEEDZ_IP:/path
+
+#     - ssh $SEEDZ_USER@$SEEDZ_IP " cd /path && sh stop.sh && exit"
+#     - ssh $SEEDZ_USER@$SEEDZ_IP "cd /path && sh start.sh && exit"
+#   only:
+#     - dev
+
+# template-docker-image-deploy-dev:
+#  stage: image-deploy
+#  when: manual
+#  image: docker:20.10.12
+#  dependencies:
+#    - template-build
+#    - template-test
+#  environment: $CI_COMMIT_BRANCH
+#  tags:
+#    - dev
+#  services:
+#    - docker:20.10.12-dind
+#  script:
+#    - wget https://github.com/okd-project/okd/releases/download/4.11.0-0.okd-2022-08-20-022919/openshift-client-linux-4.11.0-0.okd-2022-08-20-022919.tar.gz
+#    - tar -xvf openshift-client-linux-4.11.0-0.okd-2022-08-20-022919.tar.gz
+#    - mv oc kubectl /bin
+#    - apk add gcompat
+#    - oc login https://$OPENSHIFT_SERVER:$OPENSHIFT_PORT --token=$OPENSHIFT_TOKEN --insecure-skip-tls-verify
+#    - oc project $OPENSHIFT_PROJECT
+#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_TOKEN $CI_REGISTRY
+#    - docker build -t $CI_REGISTRY/seedz/los/$CI_PROJECT_NAME:$APP_VERSION .
+#    - docker push $CI_REGISTRY/seedz/los/$CI_PROJECT_NAME:$APP_VERSION
+#    - oc process -f deployment/template.yml -p CI_PROJECT_NAME=$CI_PROJECT_NAME -p OPENSHIFT_PROJECT=$OPENSHIFT_PROJECT -p CI_REGISTRY=$CI_REGISTRY -p APP_VERSION=$APP_VERSION | oc apply -f -
+#  only:
+#    - dev

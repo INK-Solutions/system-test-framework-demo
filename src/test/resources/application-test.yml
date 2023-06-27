@@ -1,0 +1,47 @@
+kafka:
+  bootstrap-servers: ${spring.embedded.kafka.brokers}
+
+spring:
+  profiles:
+    active: systemtest
+  datasource:
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+        format_sql: true
+    show-sql: true
+  kafka:
+    auto:
+      offset:
+        reset: earliest
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    consumer:
+      group-id: system-test-id
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        schema:
+          registry:
+            url: not-used
+      value-deserializer: house.inksoftware.systemtest.domain.kafka.deser.SystemTestKafkaAvroValueDeserializer
+    producer:
+      auto:
+        register:
+          schemas: true
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        schema:
+          registry:
+            url: not-used
+      value-serializer: house.inksoftware.systemtest.domain.kafka.deser.SystemTestKafkaAvroValueSerializer
+    properties:
+      specific:
+        avro:
+          reader: true
+  main:
+    allow-bean-definition-overriding: true

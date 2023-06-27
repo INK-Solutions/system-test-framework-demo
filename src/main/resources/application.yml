@@ -1,0 +1,49 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    hikari:
+      schema: stcpay
+
+server:
+  servlet:
+    contextPath: /api/template
+
+# Flyway
+flyway:
+  url: ${spring.datasource.url}
+  user: ${spring.datasource.username}
+  password: ${spring.datasource.password}
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+
+info:
+  app:
+    name: Template App
+    description: This is Template App.
+    version: 1.0.0
+
+kafka:
+  consumer:
+    group: template-project
+
+topic:
+  loan:
+    approval:
+      request: loan-approval-request
+      response: loan-approval-response
+
+spring.kafka.properties:
+  specific.avro.reader: true

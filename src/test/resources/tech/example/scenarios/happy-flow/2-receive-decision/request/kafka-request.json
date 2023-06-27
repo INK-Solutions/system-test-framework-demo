@@ -1,0 +1,8 @@
+{
+  "topic": "loan-approval-response",
+  "body": {
+    "id": "system-test-loan-approval-response-id",
+    "loanId": {{loanId}},
+    "approved": true
+  }
+}
