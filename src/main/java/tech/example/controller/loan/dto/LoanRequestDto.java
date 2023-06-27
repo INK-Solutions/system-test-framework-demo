@@ -15,4 +15,5 @@ public class LoanRequestDto {
     private String clientId;
     private BigDecimal amount;
     private boolean approved;
+    private String kycValidationResult;
 }
