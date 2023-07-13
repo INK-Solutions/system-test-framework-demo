@@ -12,8 +12,6 @@ api:
             url: ${API_GATEWAY_REQUEST_BASE_URL:http://localhost:1080}
 
 spring:
-  profiles:
-    active: systemtest
   datasource:
     password: ${DB_PASSWORD}
     url: ${DB_URL}
